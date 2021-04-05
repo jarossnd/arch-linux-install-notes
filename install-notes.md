@@ -1,8 +1,5 @@
 # Installing Arch linux with EFI
 
-1. Change keyboard layout:
-    - `loadkeys no`
-
 2. Verify boot mode:
     - `ls /sys/firmware/efi/efivars` (If the directory exist your computer supports EFI)
 
@@ -43,6 +40,8 @@
         - +30G
         - w
 
+cfdisk /dev/sda
+
 10. Create `/home` partiton:
     - `fdisk /dev/sda`
         - n
@@ -71,7 +70,7 @@
     - `arch-chroot /mnt`
 
 16. Set the timezone:
-    - `ln -sf /usr/share/zoneinfo/Europe/Oslo /etc/localtime`
+    - `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime`
 
 17. Update the Hardware clock:
     - `hwclock --systohc`
