@@ -62,7 +62,7 @@
     - `mount /dev/sda3 /mnt/home`
 
 13. Install Arch linux base packages:
-    - `pacstrap -i /mnt base`
+    - `pacstrap -i /mnt base linux linux-firmware sudo nano vim`
 
 14. Generate the `/etc/fstab` file:
     - `genfstab -U -p /mnt >> /mnt/etc/fstab`
@@ -75,6 +75,16 @@
 
 17. Update the Hardware clock:
     - `hwclock --systohc`
+
+## Set hostname
+
+`echo ArchPC > /etc/hostname`
+
+## Enable Network
+
+`pacman -S networkmanager`
+
+`systemctl enable NetworkManager`
 
 18. Install boot manager and other needed packages:
     - `pacman -S grub efibootmgr dosfstools openssh os-prober mtools linux-headers linux-lts linux-lts-headers`
