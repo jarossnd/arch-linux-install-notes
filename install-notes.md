@@ -4,7 +4,7 @@
     - `ls /sys/firmware/efi/efivars` (If the directory exist your computer supports EFI)
 
 2. Ping some site on the Internet to verify connection:
-    - `ping archlinux.org`
+    - `ping archlinux.org -c 5`
 
 3. Update system clock:
     - `timedatectl set-ntp true`
