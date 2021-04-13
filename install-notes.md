@@ -64,8 +64,12 @@
 15. Chroot into installed system:
     - `arch-chroot /mnt`
 
-16. Set the timezone:
+16. Find available timezones:
+    - `timedatectl list-timezones`
+    
+18. Set the timezone:
     - `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime`
+    - or `timedatectl set-timezone America/Chicago`
 
 17. Update the Hardware clock:
     - `hwclock --systohc`
