@@ -18,7 +18,7 @@
 
 7. Go to [https://archlinux.org/mirrorlist](https://archlinux.org/mirrorlist) and find the closest mirror that supports HTTPS:
     - Add the mirrors on top of the `/etc/pacman.d/mirrorlist` file.
-    - `Server = https://mirror.neuf.no/archlinux/$repo/os/$arch` (Norway)
+    - `Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch` (United States)
 
 8. Create EFI partition:
     - `fdisk -l` to find the designation for the HDD. (Most likely `/dev/sda`)
