@@ -1,26 +1,26 @@
 # Installing Arch linux with EFI
 
-2. Verify boot mode:
+1. Verify boot mode:
     - `ls /sys/firmware/efi/efivars` (If the directory exist your computer supports EFI)
 
-3. Ping some site on the Internet to verify connection:
+2. Ping some site on the Internet to verify connection:
     - `ping archlinux.org`
 
-4. Update system clock:
+3. Update system clock:
     - `timedatectl set-ntp true`
     - You can verify the status with `timedatectl status`
 
-5. Enable SSH:
+4. Enable SSH (optional):
     - `systemctl start sshd`
 
-6. Change root password:
+5. Change root password:
     - `passwd`
 
-7. Go to [https://archlinux.org/mirrorlist](https://archlinux.org/mirrorlist) and find the closest mirror that supports HTTPS:
+6. Go to [https://archlinux.org/mirrorlist](https://archlinux.org/mirrorlist) and find the closest mirror that supports HTTPS:
     - Add the mirrors on top of the `/etc/pacman.d/mirrorlist` file.
     - `Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch` (United States)
 
-8. Create EFI partition:
+7. Create EFI partition:
     - `fdisk -l` to find the designation for the HDD. (Most likely `/dev/sda`)
     - `fdisk /dev/sda`
         - g (to create a new partition table)
@@ -32,7 +32,7 @@
         - 1 (for EFI)
         - w
 
-9. Create `/root` partition:
+8. Create `/root` partition:
     - `fdisk /dev/sda`
         - n
         - 2
@@ -42,7 +42,7 @@
 
 cfdisk /dev/sda
 
-10. Create `/home` partiton:
+9. Create `/home` partiton:
     - `fdisk /dev/sda`
         - n
         - 3
@@ -50,29 +50,29 @@ cfdisk /dev/sda
         - enter
         - w
 
-11. Create the filesystems:
+10. Create the filesystems:
     - `mkfs.fat -F32 /dev/sda1`
     - `mkfs.ext4 /dev/sda2`
     - `mkfs.ext4 /dev/sda3`
 
-12. Create the `/root` and `/home` directories:
+11. Create the `/root` and `/home` directories:
     - `mount /dev/sda2 /mnt`
     - `mkdir /mnt/home`
     - `mount /dev/sda3 /mnt/home`
 
-13. Install Arch linux base packages:
+12. Install Arch linux base packages:
     - `pacstrap -i /mnt base linux linux-firmware sudo nano vim`
 
-14. Generate the `/etc/fstab` file:
+13. Generate the `/etc/fstab` file:
     - `genfstab -U -p /mnt >> /mnt/etc/fstab`
 
-15. Chroot into installed system:
+14. Chroot into installed system:
     - `arch-chroot /mnt`
 
-16. Set the timezone:
+15. Set the timezone:
     - `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime`
 
-17. Update the Hardware clock:
+16. Update the Hardware clock:
     - `hwclock --systohc`
 
 ## Set hostname
