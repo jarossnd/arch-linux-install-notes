@@ -20,59 +20,54 @@
     - Add the mirrors on top of the `/etc/pacman.d/mirrorlist` file.
     - `Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch` (United States)
 
-7. Create EFI partition:
-    - `fdisk -l` to find the designation for the HDD. (Most likely `/dev/sda`)
-    - `fdisk /dev/sda`
-        - g (to create a new partition table)
-        - n (to create a new partition)
-        - 1
-        - enter
-        - +300M
-        - t
-        - 1 (for EFI)
-        - w
+7. cfdisk
 
-8. Create `/root` partition:
-    - `fdisk /dev/sda`
-        - n
-        - 2
-        - enter
-        - +30G
-        - w
+8. Create EFI partition:
+    - New
+    - 300M
+    - Type
+    - EFI System
+    - Write
 
-cfdisk /dev/sda
+9. Create `/root` partition:
+    - Select free space
+    - New
+    - 30G
+    - Linux filesystem
+    - Write
 
-9. Create `/home` partiton:
-    - `fdisk /dev/sda`
-        - n
-        - 3
-        - enter
-        - enter
-        - w
+10. Create `/home` partition:
+    - Select free space
+    - New
+    - Use rest of the space
+    - Linux filesystem
+    - Write
 
-10. Create the filesystems:
+11. Create the filesystems:
+    - `fdisk -l` to view the partitions for the next step
     - `mkfs.fat -F32 /dev/sda1`
     - `mkfs.ext4 /dev/sda2`
     - `mkfs.ext4 /dev/sda3`
+    - 
 
-11. Create the `/root` and `/home` directories:
+12. Create the `/root` and `/home` directories:
     - `mount /dev/sda2 /mnt`
     - `mkdir /mnt/home`
     - `mount /dev/sda3 /mnt/home`
 
-12. Install Arch linux base packages:
+13. Install Arch linux base packages:
     - `pacstrap -i /mnt base linux linux-firmware sudo nano vim`
 
-13. Generate the `/etc/fstab` file:
+14. Generate the `/etc/fstab` file:
     - `genfstab -U -p /mnt >> /mnt/etc/fstab`
 
-14. Chroot into installed system:
+15. Chroot into installed system:
     - `arch-chroot /mnt`
 
-15. Set the timezone:
+16. Set the timezone:
     - `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime`
 
-16. Update the Hardware clock:
+17. Update the Hardware clock:
     - `hwclock --systohc`
 
 ## Set hostname
