@@ -89,7 +89,7 @@
 ```
 
 18. Set the root password
-    - `passed`
+    - `passwd`
 
 19. Let's enable the network
     - If you don't do this before your reboot you won't have internet connection
