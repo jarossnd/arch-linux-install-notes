@@ -1,6 +1,6 @@
 # Installing Arch linux with UEFI
 
-> Note: This article assumes you are using a US keyboard layout and we will also be setting up swap as a file instead of a partition.
+> Note: This article assumes you are using a US keyboard layout and we will also be setting up swap as a file instead of a partition. You should also read the official Arch installation guide (here)[https://wiki.archlinux.org/index.php/installation_guide].
 
 1. Verify boot mode:
     - This is an important set when working with a UEFI system. Run the below command and if the directory does not exist, the system may not be booted in UEFI mode.
