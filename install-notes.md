@@ -102,6 +102,8 @@
 21. Set locale:
     - `sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen` (uncomment en_US.UTF-8)
     - `locale-gen`
+    - `vim /etc/locale.conf`
+    - `LANG=en_US.UTF-8`
 
 22. Enable root login via SSH:
     - `sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config`
