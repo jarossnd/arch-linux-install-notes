@@ -22,6 +22,7 @@
     - `Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch` (United States)
 
 5. cfdisk
+    - Select `gpt` when asked for a label type
 
 6. Create EFI partition:
     - New
@@ -30,30 +31,32 @@
     - EFI System
     - Write
 
-7. Create `/root` partition:
+7. Create our swap partition:
     - Select free space
     - New
-    - 30G
-    - Linux filesystem
+    - 4GB (this number will depend on your requirements for swap)
+    - Type
+    - Linux swap
     - Write
 
-8. Create `/home` partition:
+8. Create our linux partition:
     - Select free space
     - New
     - Use rest of the space
+    - Type
     - Linux filesystem
     - Write
 
 9. Create the filesystems:
     - `fdisk -l` to view the partitions for the next step
     - `mkfs.fat -F32 /dev/sda1`
-    - `mkfs.ext4 /dev/sda2`
+    - `mkswap /dev/sda2`
     - `mkfs.ext4 /dev/sda3`
-    - 
 
-10. Create the `/root` and `/home` directories:
-    - `mount /dev/sda2 /mnt`
+10. Create `/home` directories and turn on `swap`:
+    - `mount /dev/sda3 /mnt`
     - `mkdir /mnt/home`
+    - `swapon /dev/sda2`
     - `mount /dev/sda3 /mnt/home`
 
 11. Install Arch linux base packages:
@@ -105,31 +108,20 @@
     - `vim /etc/locale.conf`
     - `LANG=en_US.UTF-8`
 
-22. Enable root login via SSH:
-    - `sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/g' /etc/ssh/sshd_config`
-    - `systemctl enable sshd.service`
-    - `passwd` (for changing the root password)
-
-23. Create EFI boot directory:
+22. Create EFI boot directory:
     - `mkdir /boot/EFI`
     - `mount /dev/sda1 /boot/EFI`
 
-24. Install GRUB on EFI mode:
+23. Install GRUB on EFI mode:
     - `grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck`
 
-25. Setup locale for GRUB:
+24. Setup locale for GRUB:
     - `cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo`
 
-26. Write GRUB config:
+25. Write GRUB config:
     - `grub-mkconfig -o /boot/grub/grub.cfg`
 
-27. Create swap file:
-    - `fallocate -l 2G /swapfile`
-    - `chmod 600 /swapfile`
-    - `mkswap /swapfile`
-    - `echo '/swapfile none swap sw 0 0' | tee -a /etc/fstab`
-
-28. Exit, unount and reboot:
+26. Exit, unount and reboot:
     - `exit`
-    - `umount -a`
+    - `umount -R /mnt`
     - `reboot`
