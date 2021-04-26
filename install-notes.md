@@ -125,3 +125,18 @@
     - `exit`
     - `umount -R /mnt`
     - `reboot`
+
+# Create User Account
+
+1. Create user account and add it to appropriate groups
+
+    - 'useradd -m username'
+    - 'passwd username'
+    - 'usermod -aG wheel,video,audio,storage username'
+
+2. Add account to sudoers file
+
+    - `vim /etc/sudoers`
+    - Uncomment the below line to allow members of group wheel to execute any command
+    - `# %wheel ALL=(ALL) ALL` to `%wheel ALL=(ALL) ALL`
+
