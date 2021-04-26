@@ -96,7 +96,7 @@
     - `systemctl enable NetworkManager`
 
 19. Install boot manager and other needed packages:
-    - `pacman -S grub efibootmgr dosfstools openssh os-prober mtools linux-headers linux-lts linux-lts-headers`
+    - `pacman -S grub efibootmgr dosfstools os-prober mtools`
 
 20. Set locale:
     - `sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen` (uncomment en_US.UTF-8)
