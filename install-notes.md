@@ -47,41 +47,37 @@
     - Linux filesystem
     - Write
 
-9. Create the filesystems:
+9. Create the filesystems and mount:
     - `fdisk -l` to view the partitions for the next step
     - `mkfs.fat -F32 /dev/sda1`
     - `mkswap /dev/sda2`
-    - `mkfs.ext4 /dev/sda3`
-
-10. Create `/home` directories and turn on `swap`:
-    - `mount /dev/sda3 /mnt`
-    - `mkdir /mnt/home`
     - `swapon /dev/sda2`
-    - `mount /dev/sda3 /mnt/home`
+    - `mkfs.ext4 /dev/sda3`
+    - `mount /dev/sda3 /mnt`
 
-11. Install Arch linux base packages:
+10. Install Arch linux base packages:
     - Use the following if you want to include VIM:
     - `pacstrap -i /mnt base linux linux-firmware sudo vim`
     - Use the following if you want to also include Nano:
     - `pacstrap -i /mnt base linux linux-firmware sudo nano vim`
 
-12. Generate the `/etc/fstab` file:
+11. Generate the `/etc/fstab` file:
     - `genfstab -U -p /mnt >> /mnt/etc/fstab`
 
-13. Chroot into installed system:
+12. Chroot into installed system:
     - `arch-chroot /mnt`
 
-14. Find available timezones:
+13. Find available timezones:
     - `timedatectl list-timezones`
     
-15. Set the timezone:
+14. Set the timezone:
     - `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime`
     - or `timedatectl set-timezone America/Chicago`
 
-16. Update the Hardware clock:
+15. Update the Hardware clock:
     - `hwclock --systohc`
 
-17. Set your hostname and configure hosts
+16. Set your hostname and configure hosts
     - `echo myhostname > /etc/hostname`
     - Update `/etc/hosts` with the following:
 
@@ -91,37 +87,37 @@
 127.0.1.1	myhostname.localdomain	myhostname
 ```
 
-18. Set the root password
+17. Set the root password
     - `passwd`
 
-19. Let's enable the network
+18. Let's enable the network
     - If you don't do this before your reboot you won't have internet connection
     - `pacman -S networkmanager`
     - `systemctl enable NetworkManager`
 
-20. Install boot manager and other needed packages:
+19. Install boot manager and other needed packages:
     - `pacman -S grub efibootmgr dosfstools openssh os-prober mtools linux-headers linux-lts linux-lts-headers`
 
-21. Set locale:
+20. Set locale:
     - `sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen` (uncomment en_US.UTF-8)
     - `locale-gen`
     - `vim /etc/locale.conf`
     - `LANG=en_US.UTF-8`
 
-22. Create EFI boot directory:
+21. Create EFI boot directory:
     - `mkdir /boot/EFI`
     - `mount /dev/sda1 /boot/EFI`
 
-23. Install GRUB on EFI mode:
+22. Install GRUB on EFI mode:
     - `grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck`
 
-24. Setup locale for GRUB:
+23. Setup locale for GRUB:
     - `cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo`
 
-25. Write GRUB config:
+24. Write GRUB config:
     - `grub-mkconfig -o /boot/grub/grub.cfg`
 
-26. Exit, unount and reboot:
+25. Exit, unount and reboot:
     - `exit`
     - `umount -R /mnt`
     - `reboot`
