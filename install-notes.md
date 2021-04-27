@@ -2,7 +2,13 @@
 
 > Note: This article assumes you are using a US keyboard layout and we will also be setting up swap as a file instead of a partition. You should also read the official Arch installation guide https://wiki.archlinux.org/index.php/installation_guide. 
 
-1. Verify boot mode:
+1. Set they keyboard
+    - If you are not using a US Keyboard then you will need to set the appropriate keymap
+    - You do not need to complete the below steps if you are already using a standard US keyboard
+    - `ls /usr/share/kbd/keymaps/**/*.map.gz` (Find the keymap you want to use)
+    - `loadkeys de-latin1`
+
+3. Verify boot mode:
     - This is an important set when working with a UEFI system. Run the below command and if the directory does not exist, the system may not be booted in UEFI mode.
     - `ls /sys/firmware/efi/efivars` (If the directory exist your computer supports EFI)
 
@@ -126,9 +132,9 @@
 
 1. Create user account and add it to appropriate groups
 
-    - 'useradd -m username'
-    - 'passwd username'
-    - 'usermod -aG wheel,video,audio,storage username'
+    - `useradd -m username`
+    - `passwd username`
+    - `usermod -aG wheel,video,audio,storage username`
 
 2. Add account to sudoers file
 
