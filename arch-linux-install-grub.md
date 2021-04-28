@@ -101,25 +101,21 @@
 17. Set the root password
     - `passwd`
 
-18. Create EFI boot directory:
-    - `mkdir /boot/EFI`
-    - `mount /dev/sda1 /boot/EFI`
-
-19. Install boot manager and other needed packages:
+18. Install boot manager and other needed packages:
     - `pacman -S grub`
 
-20. Install GRUB on EFI mode:
+19. Install GRUB on EFI mode:
     - `grub-install /dev/sda`
 
-21. Write GRUB config:
+20. Write GRUB config:
     - `grub-mkconfig -o /boot/grub/grub.cfg`
 
-22. Let's enable the network
+21. Let's enable the network
     - If you don't do this before your reboot you won't have internet connection
     - `pacman -S networkmanager`
     - `systemctl enable NetworkManager`
 
-23. Exit, unount and reboot:
+22. Exit, unount and reboot:
     - `exit`
     - `umount -R /mnt`
     - `reboot`
