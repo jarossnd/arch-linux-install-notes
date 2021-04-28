@@ -8,17 +8,17 @@
     - `ls /usr/share/kbd/keymaps/**/*.map.gz` (Find the keymap you want to use)
     - `loadkeys de-latin1`
 
-3. Verify boot mode:
+2. Verify boot mode:
     - If you get a results after running the below command then your computer is configured to use UEFI and you should review my other instructions on how to install Arch Linux on a UEFI system.
     - `ls /sys/firmware/efi/efivars` (If you receive an error then you machine is booted in BIOS and we can continue)
 
-2. Ping some site on the Internet to verify connection:
+3. Ping some site on the Internet to verify connection:
     - Use `ip link` to verify your network devices
     - If necessary, use `iwctl` to setup your wireless
     - Run `ping` to check to see if you already have an internet connection
     - `ping archlinux.org -c 5`
 
-3. Update system clock:
+4. Update system clock:
     - View the current status of your clock by running `timedatectl status`
     - Run the following command to ensure your system clock is correct `timedatectl set-ntp true`
     - This will set your date and time to update remotely using network time protocal
@@ -27,42 +27,66 @@
     - use `fdisk -l` to list your storage devices
     - Once you have identified the disk you want to use do `fdisk /dev/sda`
     - Note: Replace /dev/sda with the disk you want to use
-    - Press `n` to create a new partition
-    -
+    - Press `n` to create a new partition. We will create this partition as our Swap partition
+    - Press `e` for extended
+    - Use partition number `1` which should be the default option
+    - Use the default for the first sector
+    - Set the last sector. If you want your swap file to be 4GB then type `+4G`
+    - Type `t` to set the type and choose `82` for Linux swap
+    - Now we will create our root partition so type `n` to create a new partition
+    - Partition type for our root partition will be primary
+    - Set the partition number to equal `2`
+    - Use the default for the first sector
+    - Use the default for the last sector to use all remaining space
+    - Set the partition number to `2` which should be the default value
+    - Press `t` to set the type then choose `83`
+    - Press `a` to set a bootable flag for parition number `2`
+    - Last, press `w` to write your partitions
 
-9. Create the filesystems and mount:
+6. Create the filesystems
     - `fdisk -l` to view the partitions for the next step
-    - `mkfs.fat -F32 /dev/sda1`
-    - `mkswap /dev/sda2`
-    - `swapon /dev/sda2`
-    - `mkfs.ext4 /dev/sda3`
-    - `mount /dev/sda3 /mnt`
+    - `mkfs.ext4 /dev/sda2
+    - `mkswap /dev/sda1`
+    - `mount /dev/sda2 /mnt`
+    - `swapon /dev/sda1`
 
-10. Go to [https://archlinux.org/mirrorlist](https://archlinux.org/mirrorlist) and find the closest mirror that supports HTTPS:
+7. Go to [https://archlinux.org/mirrorlist](https://archlinux.org/mirrorlist) and find the closest mirror that supports HTTPS:
     - Add the mirrors on top of the `/etc/pacman.d/mirrorlist` file.
     - `Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch` (United States)
 
-10. Install Arch linux base packages:
+8. Install Arch linux base packages:
     - Use the following if you want to include VIM:
     - `pacstrap -i /mnt base linux linux-firmware sudo vim`
     - Use the following if you want to also include Nano:
     - `pacstrap -i /mnt base linux linux-firmware sudo nano vim`
 
-11. Generate the `/etc/fstab` file:
+9. Generate the `/etc/fstab` file:
     - `genfstab -U -p /mnt >> /mnt/etc/fstab`
 
-12. Chroot into installed system:
+10. Chroot into installed system:
     - `arch-chroot /mnt`
 
-13. Find available timezones:
+11. Find available timezones:
     - `timedatectl list-timezones`
     
-14. Set the timezone:
+12. Set the timezone:
     - `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime`
     - or `timedatectl set-timezone America/Chicago`
+    - If you are unsure, do a `ls /usr/share/zoneinfo` to find country
+    - Once you have found the country do another `/usr/share/zoneinfo/America` to find the city
 
-15. Update the Hardware clock:
+13. Update the Hardware clock:
     - `hwclock --systohc`
+
+14. Set locale:
+    - `vim /etc/locale.gen` (uncomment en_US.UTF-8)
+    - `locale-gen`
+    - `vim /etc/locale.conf`
+    - `LANG=en_US.UTF-8`
+
+15. Set your keyboard
+    - `vim /etc/vconsole.conf`
+    - `KEYMAP=de-latin1`
 
 16. Set your hostname and configure hosts
     - `echo myhostname > /etc/hostname`
@@ -77,34 +101,25 @@
 17. Set the root password
     - `passwd`
 
-18. Let's enable the network
+18. Create EFI boot directory:
+    - `mkdir /boot/EFI`
+    - `mount /dev/sda1 /boot/EFI`
+
+19. Install boot manager and other needed packages:
+    - `pacman -S grub`
+
+20. Install GRUB on EFI mode:
+    - `grub-install /dev/sda`
+
+21. Write GRUB config:
+    - `grub-mkconfig -o /boot/grub/grub.cfg`
+
+22. Let's enable the network
     - If you don't do this before your reboot you won't have internet connection
     - `pacman -S networkmanager`
     - `systemctl enable NetworkManager`
 
-19. Install boot manager and other needed packages:
-    - `pacman -S grub efibootmgr dosfstools os-prober mtools`
-
-20. Set locale:
-    - `sed -i 's/#en_US.UTF-8/en_US.UTF-8/g' /etc/locale.gen` (uncomment en_US.UTF-8)
-    - `locale-gen`
-    - `vim /etc/locale.conf`
-    - `LANG=en_US.UTF-8`
-
-21. Create EFI boot directory:
-    - `mkdir /boot/EFI`
-    - `mount /dev/sda1 /boot/EFI`
-
-22. Install GRUB on EFI mode:
-    - `grub-install --target=x86_64-efi --bootloader-id=grub_uefi --recheck`
-
-23. Setup locale for GRUB:
-    - `cp /usr/share/locale/en\@quot/LC_MESSAGES/grub.mo /boot/grub/locale/en.mo`
-
-24. Write GRUB config:
-    - `grub-mkconfig -o /boot/grub/grub.cfg`
-
-25. Exit, unount and reboot:
+23. Exit, unount and reboot:
     - `exit`
     - `umount -R /mnt`
     - `reboot`
