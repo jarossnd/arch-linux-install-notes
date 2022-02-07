@@ -45,7 +45,7 @@
 
 6. Create the filesystems
     - `fdisk -l` to view the partitions for the next step
-    - `mkfs.ext4 /dev/sda2
+    - `mkfs.ext4 /dev/sda2`
     - `mkswap /dev/sda1`
     - `mount /dev/sda2 /mnt`
     - `swapon /dev/sda1`
