@@ -34,7 +34,7 @@
     - Set the last sector. If you want your swap file to be 4GB then type `+4G`
     - Type `t` to set the type and choose `82` for Linux swap
     - Now we will create our root partition so type `n` to create a new partition
-    - Partition type for our root partition will be primary
+    - Partition type for our root partition `p` will be primary
     - Set the partition number to equal `2`
     - Use the default for the first sector
     - Use the default for the last sector to use all remaining space
