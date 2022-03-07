@@ -10,7 +10,7 @@
 
 2. Verify boot mode:
     - If you get a results after running the below command then your computer is configured to use UEFI and you should review my other instructions on how to install Arch Linux on a UEFI system.
-    - `ls /sys/firmware/efi/efivars` (If you receive an error then you machine is booted in BIOS and we can continue)
+    - `ls /sys/firmware/efi/efivars` (If you receive an error then you machine is booted in BIOS and we can continue. If you get output then follow the UEFI directions in this repo.)
 
 3. Ping some site on the Internet to verify connection:
     - Use `ip link` to verify your network devices
