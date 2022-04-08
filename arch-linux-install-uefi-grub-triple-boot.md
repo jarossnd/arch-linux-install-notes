@@ -1,4 +1,4 @@
-# Installing Arch linux with UEFI
+# Installing Arch Linux with UEFI
 
 ## Overview
 
