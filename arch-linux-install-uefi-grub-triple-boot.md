@@ -4,7 +4,7 @@
 
 The steps I tool to triple boot Windows, Windows, and Arch Linux. Each OS has it's own hard drive. I also installed both Windows OS's first prior to installing Arch Linux.
 
-> Note: This article assumes you are using a US keyboard layout and we will also be setting up swap as a file instead of a partition. You should also read the official Arch installation guide https://wiki.archlinux.org/index.php/installation_guide. 
+> Note: This article assumes you are using a US keyboard layout. You should also read the official Arch installation guide https://wiki.archlinux.org/index.php/installation_guide. 
 
 1. Set they keyboard
     - If you are not using a US Keyboard then you will need to set the appropriate keymap
@@ -31,8 +31,8 @@ The steps I tool to triple boot Windows, Windows, and Arch Linux. Each OS has it
     - Add the mirrors on top of the `/etc/pacman.d/mirrorlist` file.
     - `Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch` (United States)
 
-6. cfdisk
-    - Select `gpt` when asked for a label type
+6. cfdisk /dev/<HHD>
+    - Select `gpt` if asked for a label type
 
 7. Create our swap partition:
     - Select free space
@@ -50,7 +50,7 @@ The steps I tool to triple boot Windows, Windows, and Arch Linux. Each OS has it
     - Linux filesystem
     - Write
 
-9. Create the filesystems and mount:
+9. Create the filesystems and mount (replace sda* with the name of your HHD):
     - `fdisk -l` to view the partitions for the next step
     - `mkswap /dev/sda1`
     - `swapon /dev/sda1`
@@ -60,8 +60,8 @@ The steps I tool to triple boot Windows, Windows, and Arch Linux. Each OS has it
 10. Mount the drive that contains the EFI partition (On the Windows HDD)
     - Run fdisk to find out what drive contains the existing EFI partition as we will need to mount it
     - `fdisk -l`
-    - `mkdir /mnt /efi`
-    - `mount /dev/sdc1 /mnt/efi`
+    - `mkdir /mnt/efi`
+    - `mount /dev/sda1 /mnt/efi`
 
 10. Install Arch linux base packages:
     - Use the following if you want to include VIM:
@@ -111,7 +111,7 @@ The steps I tool to triple boot Windows, Windows, and Arch Linux. Each OS has it
 
 21. Create EFI boot directory:
     - `mkdir /boot/EFI`
-    - `mount /dev/sda1 /boot/EFI`
+    - `mount /dev/sda1 /boot/EFI` (replace /dev/sda1 with the drive that contains the Windows EFI partition)
 
 22. Install GRUB on EFI mode:
     - `grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB`
