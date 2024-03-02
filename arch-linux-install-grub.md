@@ -1,9 +1,9 @@
 # Installing Arch Linux
 
-> Note: This article assumes you are using a US keyboard layout and we will also be setting up swap as a file instead of a partition. You should also read the official Arch installation guide https://wiki.archlinux.org/index.php/installation_guide. 
+> Note: This article assumes you are using a US keyboard layout. You should also read the official [Arch installation guide](https://wiki.archlinux.org/index.php/installation_guide).
 
 1. Set the keyboard
-    - If you are not using a US Keyboard then you will need to set the appropriate keymap
+    - If you are not using a US keyboard then you will need to set the appropriate keymap
     - You do not need to complete the below steps if you are already using a standard US keyboard
     - `ls /usr/share/kbd/keymaps/**/*.map.gz` (Find the keymap you want to use)
     - `loadkeys de-latin1`
@@ -23,7 +23,7 @@
     - Run the following command to ensure your system clock is correct `timedatectl set-ntp true`
     - This will set your date and time to update remotely using network time protocal
 
-5. fdisk
+5. Setting up partitions with `fdisk`
     - use `fdisk -l` to list your storage devices
     - Once you have identified the disk you want to use do `fdisk /dev/sda`
     - Note: Replace /dev/sda with the disk you want to use
@@ -66,29 +66,25 @@
 10. Chroot into installed system:
     - `arch-chroot /mnt`
 
-11. Find available timezones:
-    - `timedatectl list-timezones`
-    
-12. Set the timezone:
+11. Set the timezone:
     - `ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime`
-    - or `timedatectl set-timezone America/Chicago`
     - If you are unsure, do a `ls /usr/share/zoneinfo` to find country
     - Once you have found the country do another `/usr/share/zoneinfo/America` to find the city
 
-13. Update the Hardware clock:
+12. Update the Hardware clock:
     - `hwclock --systohc`
 
-14. Set locale:
+13. Set locale:
     - `vim /etc/locale.gen` (uncomment en_US.UTF-8)
     - `locale-gen`
     - `vim /etc/locale.conf`
     - `LANG=en_US.UTF-8`
 
-15. Set your keyboard
+14. Set your keyboard
     - `vim /etc/vconsole.conf`
     - `KEYMAP=de-latin1`
 
-16. Set your hostname and configure hosts
+15. Set your hostname and configure hosts
     - `echo myhostname > /etc/hostname`
     - Update `/etc/hosts` with the following:
 
