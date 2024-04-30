@@ -24,35 +24,51 @@
     - This will set your date and time to update remotely using network time protocal
 
 5. Setting up partitions with `fdisk`
-    - use `fdisk -l` to list your storage devices
-    - Once you have identified the disk you want to use do `fdisk /dev/sda`
-    - Note: Replace /dev/sda with the disk you want to use
-    - Press `n` to create a new partition. We will create this partition as our Swap partition
-    - Press `e` for extended
-    - Use partition number `1` which should be the default option
-    - Use the default for the first sector
-    - Set the last sector. If you want your swap file to be 4GB then type `+4G`
-    - Type `t` to set the type and choose `82` for Linux swap
-    - Now we will create our root partition so type `n` to create a new partition
-    - Partition type for our root partition `p` will be primary
-    - Set the partition number to equal `2`
-    - Use the default for the first sector
-    - Use the default for the last sector to use all remaining space
-    - Set the partition number to `2` which should be the default value
-    - Press `t` to set the type then choose `83`
-    - Press `a` to set a bootable flag for parition number `2`
-    - Last, press `w` to write your partitions
+
+**EFI Partition**
+- use `fdisk -l` to list your storage devices
+- Once you have identified the disk you want to use do `fdisk /dev/nvme1n1`
+- Note: Replace /dev/nvme1n1 with the disk you want to use
+- Press `n` to create a new partition. We will create this partition as our EFI partition
+- Press `p` for primary
+- Use partition number `1` which should be the default option
+- Use the default for the first sector
+- Set the last sector. I am going to use `+4G`
+- Type `t` to set the type and choose `ef` for EFI (FAT-12/16/32)
+
+**Swap Partition**
+- use `fdisk -l` to list your storage devices
+- Once you have identified the disk you want to use do `fdisk /dev/nvme1n1`
+- Note: Replace /dev/nvme1n1 with the disk you want to use
+- Press `n` to create a new partition. We will create this partition as our Swap partition
+- Press `e` for extended
+- Use partition number `2` which should be the default option
+- Use the default for the first sector
+- Set the last sector. If you want your swap file to be 8GB then type `+8G`
+- Type `t` to set the type and choose `82` for Linux swap
+
+**root Partition**
+- Now we will create our root partition so type `n` to create a new partition
+- Partition type for our root partition `p` will be primary
+- Set the partition number to equal `3`
+- Use the default for the first sector
+- Use the default for the last sector to use all remaining space
+- Press `t` to set the type then choose `83`
+- Last, press `w` to write your partitions
 
 6. Create the filesystems
     - `fdisk -l` to view the partitions for the next step
-    - `mkfs.ext4 /dev/sda2`
-    - `mkswap /dev/sda1`
-    - `mount /dev/sda2 /mnt`
-    - `swapon /dev/sda1`
+    - `mkfs.fat -F32 /dev/nvme1n1p1`
+    - `mkswap /dev/nvme1n1p2`
+    - `swapon /dev/nvme1n1p2`
+    - `mkfs.ext4 /dev/nvme1n1p3`
+    - `mount /dev/nvme1n1p3 /mnt`
 
-7. Go to [https://archlinux.org/mirrorlist](https://archlinux.org/mirrorlist) and find the closest mirror that supports HTTPS:
-    - Add the mirrors on top of the `/etc/pacman.d/mirrorlist` file.
-    - `Server = https://mirror.arizona.edu/archlinux/$repo/os/$arch` (United States)
+7. Mount the drive that contains the EFI partition (On the Windows HDD)
+    - Run fdisk to find out what drive contains the existing EFI partition as we will need to mount it
+    - `fdisk -l`
+    - `mkdir /mnt/efi`
+    - `mount /dev/nvme0n1p1 /mnt/efi`
 
 8. Install Arch linux base packages:
     - Use the following if you want to include VIM:
@@ -61,7 +77,7 @@
     - `pacstrap -i /mnt base linux linux-firmware sudo nano vim`
 
 9. Generate the `/etc/fstab` file:
-    - `genfstab -U -p /mnt >> /mnt/etc/fstab`
+    - `genfstab -U /mnt >> /mnt/etc/fstab`
 
 10. Chroot into installed system:
     - `arch-chroot /mnt`
@@ -80,11 +96,7 @@
     - `vim /etc/locale.conf`
     - `LANG=en_US.UTF-8`
 
-14. Set your keyboard
-    - `vim /etc/vconsole.conf`
-    - `KEYMAP=de-latin1`
-
-15. Set your hostname and configure hosts
+14. Set your hostname and configure hosts
     - `echo myhostname > /etc/hostname`
     - Update `/etc/hosts` with the following:
 
@@ -94,14 +106,22 @@
 127.0.1.1	myhostname.localdomain	myhostname
 ```
 
-17. Set the root password
+15. Set the root password
     - `passwd`
 
-18. Install boot manager and other needed packages:
-    - `pacman -S grub`
+16. Install boot manager and os-prober:
+    - `pacman -S grub efibootmgr os-prober`
 
-19. Install GRUB on EFI mode:
-    - `grub-install /dev/sda`
+17. Create EFI boot directory:
+    - `mkdir /boot/EFI`
+    - `mount /dev/nvme0n1p1 /boot/EFI` (replace /dev/nvme0n1p1 with the drive that contains the Windows EFI partition)
+
+18. Install GRUB on EFI mode:
+    - `grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=GRUB`
+
+19. Enable os-prober
+    - `vim /etc/default/grub`
+    - Uncomment `GRUB_DISABLE_OS_PROBER=false`
 
 20. Write GRUB config:
     - `grub-mkconfig -o /boot/grub/grub.cfg`
@@ -116,6 +136,10 @@
     - `umount -R /mnt`
     - `reboot`
 
+23. After a reoobt I did not see Windows in the Grub boot loader menu so I ran the following:
+
+`sudo grub-mkconfig -o /boot/grub/grub.cfg`
+
 # Create User Account
 
 1. Create user account and add it to appropriate groups
@@ -129,3 +153,4 @@
     - `vim /etc/sudoers`
     - Uncomment the below line to allow members of group wheel to execute any command
     - `# %wheel ALL=(ALL) ALL` to `%wheel ALL=(ALL) ALL`
+
